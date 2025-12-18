@@ -1,7 +1,7 @@
-from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import MinLengthValidator
-
+from django import forms
+from .models import Application
 from .models import CustomUser, Review
 
 
@@ -32,4 +32,12 @@ class ReviewForm(forms.ModelForm):
         widgets = {
             'rating': forms.NumberInput(attrs={'min': 1, 'max': 5}),
             'comment': forms.Textarea(attrs={'rows': 3})
+        }
+
+class ApplicationForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = ['title', 'start_date', 'payment_method', 'description']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
         }

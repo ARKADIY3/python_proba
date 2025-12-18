@@ -21,19 +21,26 @@ class CustomUser(AbstractUser):
     )
 
 
+# models.py - МЕНЯЕМ статусы
 class Application(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'В обработке'),
-        ('approved', 'Одобрено'),
-        ('completed', 'Завершено'),
-        ('rejected', 'Отклонено'),
+        ('new', 'Новая'),  # ← Изначальный статус
+        ('in_progress', 'Идет обучение'),  # ← Админ может сменить
+        ('completed', 'Обучение завершено'),  # ← Финальный статус
+    ]
+
+    PAYMENT_CHOICES = [
+        ('cash', 'Наличные'),
+        ('transfer', 'Перевод по номеру телефона'),
     ]
 
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, verbose_name='Пользователь')
-    title = models.CharField('Название заявки', max_length=200)
-    description = models.TextField('Описание', blank=True)
+    title = models.CharField('Наименование курса', max_length=200)
+    start_date = models.DateField('Дата начала обучения', default='2025-01-01')
+    payment_method = models.CharField('Способ оплаты', max_length=20, choices=PAYMENT_CHOICES, default='cash')
+    description = models.TextField('Дополнительные пожелания', blank=True)
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
-    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='new')  # ← default='new'
 
     def __str__(self):
         return f"{self.title} - {self.get_status_display()}"

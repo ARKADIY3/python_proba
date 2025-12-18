@@ -10,4 +10,5 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('', views.home_view, name='home'),  # Обновляем - см. ниже
     path('applications/', views.applications_view, name='applications'),
+    path('applications/create/', views.create_application, name='create_application'),
 ]

@@ -2,7 +2,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
-from .forms import RegisterForm, ReviewForm
+from .forms import RegisterForm, ReviewForm, ApplicationForm
 from .models import Application, Review
 
 
@@ -92,3 +92,21 @@ def applications_view(request):
         'applications_data': applications_data,
         'form': form
     })
+
+
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def create_application(request):
+    if request.method == 'POST':
+        form = ApplicationForm(request.POST)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.user = request.user
+            application.save()
+            return redirect('applications')
+    else:
+        form = ApplicationForm()
+
+    return render(request, 'create_application.html', {'form': form})
