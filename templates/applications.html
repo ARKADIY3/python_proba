@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Мои заявки</title>
+</head>
+<body>
+    <h1>Мои заявки</h1>
+
+    {% if applications_data %}
+        {% for item in applications_data %}
+            <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px;">
+                <h3>{{ item.application.title }}</h3>
+                <p><strong>Статус:</strong> {{ item.application.get_status_display }}</p>
+                <p><strong>Описание:</strong> {{ item.application.description }}</p>
+                <p><strong>Дата создания:</strong> {{ item.application.created_at|date:"d.m.Y H:i" }}</p>
+
+                {% if item.application.status == 'completed' and not item.has_review %}
+                    <hr>
+                    <h4>Оставить отзыв:</h4>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="application_id" value="{{ item.application.id }}">
+
+                        <div>
+                            <label>Оценка (1-5):</label>
+                            <input type="number" name="rating" min="1" max="5" required>
+                        </div>
+
+                        <div>
+                            <label>Комментарий:</label><br>
+                            <textarea name="comment" rows="3" cols="50"></textarea>
+                        </div>
+
+                        <button type="submit">Отправить отзыв</button>
+                    </form>
+                {% elif item.has_review %}
+                    <hr>
+                    <h4>Ваш отзыв:</h4>
+                    <p><strong>Оценка:</strong> {{ item.review.rating }}/5</p>
+                    <p><strong>Комментарий:</strong> {{ item.review.comment }}</p>
+                    <p><strong>Дата отзыва:</strong> {{ item.review.created_at|date:"d.m.Y H:i" }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>У вас еще нет заявок.</p>
+    {% endif %}
+
+    <br>
+    <a href="{% url 'home' %}">На главную</a>
+</body>
+</html>
