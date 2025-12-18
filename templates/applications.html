@@ -1,52 +1,73 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Мои заявки</title>
-</head>
-<body>
-    <h1>Мои заявки</h1>
-<a href="{% url 'create_application' %}">Создать новую заявку</a>
-    {% if applications_data %}
-        {% for item in applications_data %}
-            <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px;">
-                <h3>{{ item.application.title }}</h3>
-                <p><strong>Статус:</strong> {{ item.application.get_status_display }}</p>
-                <p><strong>Описание:</strong> {{ item.application.description }}</p>
-                <p><strong>Дата создания:</strong> {{ item.application.created_at|date:"d.m.Y H:i" }}</p>
+{% extends 'base.html' %}
 
+{% block title %}Мои заявки{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Мои заявки</h1>
+
+<a href="{% url 'create_application' %}" class="btn btn-success mb-3">
+    <i class="bi bi-plus-circle"></i> Создать новую заявку
+</a>
+
+{% if applications_data %}
+    {% for item in applications_data %}
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">{{ item.application.title }}</h5>
+                <span class="badge 
+                    {% if item.application.status == 'new' %}bg-secondary
+                    {% elif item.application.status == 'in_progress' %}bg-primary
+                    {% else %}bg-success{% endif %}">
+                    {{ item.application.get_status_display }}
+                </span>
+            </div>
+            <div class="card-body">
+                <p><strong>Дата создания:</strong> {{ item.application.created_at|date:"d.m.Y H:i" }}</p>
+                <p><strong>Дата начала:</strong> {{ item.application.start_date|date:"d.m.Y" }}</p>
+                <p><strong>Способ оплаты:</strong> {{ item.application.get_payment_method_display }}</p>
+                <p><strong>Описание:</strong> {{ item.application.description|default:"-" }}</p>
+                
                 {% if item.application.status == 'completed' and not item.has_review %}
                     <hr>
-                    <h4>Оставить отзыв:</h4>
-                    <form method="POST">
+                    <h5>Оставить отзыв:</h5>
+                    <form method="POST" class="row g-3">
                         {% csrf_token %}
                         <input type="hidden" name="application_id" value="{{ item.application.id }}">
-
-                        <div>
+                        
+                        <div class="col-md-3">
                             <label>Оценка (1-5):</label>
-                            <input type="number" name="rating" min="1" max="5" required>
+                            <input type="number" name="rating" class="form-control" min="1" max="5" required>
                         </div>
-
-                        <div>
-                            <label>Комментарий:</label><br>
-                            <textarea name="comment" rows="3" cols="50"></textarea>
+                        
+                        <div class="col-md-9">
+                            <label>Комментарий:</label>
+                            <textarea name="comment" class="form-control" rows="2"></textarea>
                         </div>
-
-                        <button type="submit">Отправить отзыв</button>
+                        
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+                        </div>
                     </form>
                 {% elif item.has_review %}
                     <hr>
-                    <h4>Ваш отзыв:</h4>
-                    <p><strong>Оценка:</strong> {{ item.review.rating }}/5</p>
-                    <p><strong>Комментарий:</strong> {{ item.review.comment }}</p>
-                    <p><strong>Дата отзыва:</strong> {{ item.review.created_at|date:"d.m.Y H:i" }}</p>
+                    <h5>Ваш отзыв:</h5>
+                    <p><strong>Оценка:</strong> 
+                        {% for i in "12345"|make_list %}
+                            {% if forloop.counter <= item.review.rating %}
+                                <i class="bi bi-star-fill text-warning"></i>
+                            {% else %}
+                                <i class="bi bi-star text-warning"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </p>
+                    <p><strong>Комментарий:</strong> {{ item.review.comment|default:"-" }}</p>
                 {% endif %}
             </div>
-        {% endfor %}
-    {% else %}
-        <p>У вас еще нет заявок.</p>
-    {% endif %}
-
-    <br>
-    <a href="{% url 'home' %}">На главную</a>
-</body>
-</html>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info">
+        У вас еще нет заявок.
+    </div>
+{% endif %}
+{% endblock %}

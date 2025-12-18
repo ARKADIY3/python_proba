@@ -20,8 +20,6 @@ class CustomUser(AbstractUser):
         validators=[RegexValidator(r'^[a-zA-Z0-9]{6,}$', 'Латиница и цифры, минимум 6 символов')]
     )
 
-
-# models.py - МЕНЯЕМ статусы
 class Application(models.Model):
     STATUS_CHOICES = [
         ('new', 'Новая'),  # ← Изначальный статус
@@ -40,7 +38,7 @@ class Application(models.Model):
     payment_method = models.CharField('Способ оплаты', max_length=20, choices=PAYMENT_CHOICES, default='cash')
     description = models.TextField('Дополнительные пожелания', blank=True)
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
-    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='new')  # ← default='new'
+    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='new')
 
     def __str__(self):
         return f"{self.title} - {self.get_status_display()}"

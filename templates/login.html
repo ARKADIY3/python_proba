@@ -1,36 +1,43 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Авторизация</title>
-</head>
-<body>
-    <h1>Вход в систему</h1>
+{% extends 'base.html' %}
 
-    <!-- Сообщения об ошибках (появляются автоматически) -->
-    {% if form.errors %}
-        <p style="color: red;">Неверный логин или пароль</p>
-    {% endif %}
+{% block title %}Вход{% endblock %}
 
-    <form method="POST">
-        {% csrf_token %}
-
-        <!-- Поле логина -->
-        <div>
-            <label for="id_username">Логин:</label>
-            {{ form.username }}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Вход в систему</h4>
+            </div>
+            <div class="card-body">
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Неверный логин или пароль
+                    </div>
+                {% endif %}
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Логин:</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Пароль:</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">Войти</button>
+                </form>
+                
+                <hr>
+                <p class="text-center">
+                    Еще не зарегистрированы? <a href="{% url 'register' %}">Регистрация</a>
+                </p>
+            </div>
         </div>
-
-        <!-- Поле пароля -->
-        <div>
-            <label for="id_password">Пароль:</label>
-            {{ form.password }}
-        </div>
-
-        <!-- Кнопка входа -->
-        <button type="submit">Войти</button>
-    </form>
-
-    <!-- Ссылка на регистрацию -->
-    <p>Еще не зарегистрированы? <a href="{% url 'register' %}">Регистрация</a></p>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}

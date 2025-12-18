@@ -1,38 +1,52 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Создать заявку</title>
-</head>
-<body>
-    <h1>Формирование заявки</h1>
+{% extends 'base.html' %}
 
-    <form method="POST">
-        {% csrf_token %}
+{% block title %}Создать заявку{% endblock %}
 
-        <p>
-            <label>Наименование курса:</label>
-            {{ form.title }}
-        </p>
-
-        <p>
-            <label>Дата начала обучения:</label>
-            {{ form.start_date }}
-        </p>
-
-        <p>
-            <label>Способ оплаты:</label>
-            {{ form.payment_method }}
-        </p>
-
-        <p>
-            <label>Дополнительные пожелания:</label>
-            {{ form.description }}
-        </p>
-
-        <button type="submit">Отправить заявку</button>
-    </form>
-
-    <br>
-    <a href="{% url 'applications' %}">Назад к заявкам</a>
-</body>
-</html>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Формирование заявки</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_title" class="form-label">Наименование курса:</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_start_date" class="form-label">Дата начала обучения:</label>
+                        <input type="date" name="start_date" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_payment_method" class="form-label">Способ оплаты:</label>
+                        <select name="payment_method" class="form-select" required>
+                            <option value="cash">Наличные</option>
+                            <option value="transfer">Перевод по номеру телефона</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_description" class="form-label">Дополнительные пожелания:</label>
+                        <textarea name="description" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-send"></i> Отправить заявку
+                        </button>
+                        <a href="{% url 'applications' %}" class="btn btn-outline-secondary">
+                            Назад к заявкам
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
